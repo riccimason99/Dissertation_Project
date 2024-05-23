@@ -12,46 +12,8 @@ import pandas as pd
 import numpy as np
 import re
 
-#import word2number as num
-#rom word2number import w2n
 
-
-# Load and look at data
-violent_2017 = pd.read_csv("/Users/riccimason99/Downloads/Dissertation/US Violent Protests.csv")
-violent_2017.shape
-
-# Remove smaller values with the following code
-# Enhanced function to extract the first number, considering ranges and textual descriptions
-def extract_number(text):
-    # Check for and handle textual numbers
-    if 'a few hundred' in text:
-        return 300  # Approximate "a few hundred" as 300 for filtering
-    if 'dozens' in text:
-        return np.nan  # "Dozens" is indeterminate but likely less than 300, so we'll ignore these
-    
-    # Find all numbers or ranges in the text
-    numbers_or_ranges = re.findall(r'\d+-\d+|\d+', text)
-    if numbers_or_ranges:
-        # Handle the first found number or range
-        first_number_or_range = numbers_or_ranges[0]
-        if '-' in first_number_or_range:
-            # If it's a range, take the first part
-            return int(first_number_or_range.split('-')[0])
-        else:
-            # Otherwise, just return the number
-            return int(first_number_or_range)
-    return np.nan  # Return NaN if no numbers found]]]]]]]]]]]]]]]
-
-# Apply the function to the 'tags' column
-violent_2017['first_number'] = violent_2017['tags'].apply(extract_number)
-# Filter rows: keep rows where first_number is NaN or first_number >= 200
-filtered_violent_2017 = violent_2017[(violent_2017['first_number'] >= 200) | (violent_2017['first_number'].isna())]
-print(filtered_violent_2017['tags'].unique())
-filtered_violent_2017.shape
-
-
-#### Remove small values manually 
-# Example list of values you want to remove from the 'tags' column
+#  list of values you want to remove from the 'tags' column
 values_to_remove = [
     'crowd size=dozens',
     'crowd size=no report',
@@ -62,7 +24,6 @@ values_to_remove = [
     'counter-demonstration; crowd size=no report',
     'counter-demonstration; crowd size=dozens',
     'crowd size=four',
-    'crowd size=more than hundred',
     'crowd size=eighteen',
     'crowd size=five',
     'crowd size=two',
@@ -78,7 +39,6 @@ values_to_remove = [
     'crowd size=dozens to hundreds',
     'crowd size=thirty',
     'crowd size=four',
-    'crowd size=more than hundred',
     'crowd size=eighteen',
     'crowd size=five',
     'crowd size=two',
@@ -128,9 +88,48 @@ values_to_remove = [
      'crowd size=a crowd; statue',
      'crowd size=at least dozens; statue',
      'counter-demonstration; crowd size=a crowd',
-     'crowd size=no report', 'crowd size=dozens', 'crowd size=large' 'crowd size=around 20']
+     'crowd size=no report', 'crowd size=dozens', 'crowd size=large' 'crowd size=around 20',
+     'crowd size=handful', 'crowd size=many', 'crowd size=sizeable']
 
-# Remove rows we dont want
+
+# Function to remove smaller values
+# Enhanced function to extract the first number, considering ranges and textual descriptions
+def extract_number(text):
+    # Check for and handle textual numbers
+    if 'a few hundred' in text:
+        return 300  # Approximate "a few hundred" as 300 for filtering
+    if 'dozens' in text:
+        return np.nan  # "Dozens" is indeterminate but likely less than 300, so we'll ignore these
+    
+    # Find all numbers or ranges in the text
+    numbers_or_ranges = re.findall(r'\d+-\d+|\d+', text)
+    if numbers_or_ranges:
+        # Handle the first found number or range
+        first_number_or_range = numbers_or_ranges[0]
+        if '-' in first_number_or_range:
+            # If it's a range, take the first part
+            return int(first_number_or_range.split('-')[0])
+        else:
+            # Otherwise, just return the number
+            return int(first_number_or_range)
+    return np.nan  # Return NaN if no numbers found
+
+
+# Load and look at data
+violent_2017 = pd.read_csv("/Users/riccimason99/Downloads/Dissertation_2024/FULL Violent Protests.csv")
+#violent_2017 = pd.read_csv("//Users/riccimason99/Downloads/Dissertation_2024/Violent Articles/ACLED_TEST.csv")
+
+
+# REMOVE VALUES OF SMALL PROTEST
+
+# Apply the function to the 'tags' column
+violent_2017['first_number'] = violent_2017['tags'].apply(extract_number)
+# Filter rows: keep rows where first_number is NaN or first_number >= 100
+filtered_violent_2017 = violent_2017[(violent_2017['first_number'] >= 100) | (violent_2017['first_number'].isna())]
+print(filtered_violent_2017['tags'].unique())
+filtered_violent_2017.shape
+
+# Remove rows we dont want from values to remove
 filtered_violent_2017 = filtered_violent_2017[~filtered_violent_2017['tags'].isin(values_to_remove)]
 print(filtered_violent_2017.tags.unique())
 filtered_violent_2017.shape
@@ -144,41 +143,46 @@ violent_protests = filtered_violent_2017[~mask]
 violent_protests.shape    
 
 
-# Drop columns that I do not care about
+# Remove useless columns
 violent_protests.columns
 violent_protests = violent_protests.drop(['time_precision', 
         'sub_event_type', 'first_number', 'event_type', 'actor1',  'inter1', 
         'actor2', 'timestamp', 'region', 'geo_precision',  'source_scale', 'iso', 
         'inter2', 'interaction', 'event_id_cnty', 'civilian_targeting',
         'admin3', 'country', 'disorder_type'], axis  = 1)
-
 violent_protests.reset_index(drop = True, inplace = True)
-violent_protests.shape
-violent_protests.tags.unique()
+
+# Create a column with protest date in date time format 
+violent_protests["date_time"] = pd.to_datetime(violent_protests["event_date"], format = '%d %B %Y')
 
 
-## Lets see what these observations are all about
-pd.set_option('display.max_colwidth', 1000)
-print(violent_protests.notes.tail())
-violent_protests.shape
+
+# CREATE ANOTHER DATA FRAME OF ONLY ESSENTIAL COLUMNS
+
+# Remove non-essential columns
+violent_essential = violent_protests.drop(columns = ['year', 'assoc_actor_2', 'admin2', 
+                                           'latitude', 'longitude', 'source','fatalities'])
+# Create a column of dates string in the format that lesix nexis news takes,
+# make it easier to search articles 
+violent_essential['date_string'] = violent_essential['date_time'].dt.strftime('%d/%m/%Y')
 
 
 ##############################################################################################################
 ##############################################################################################################
-#  NON VIOLENT
+#  Lets do the same thing for NON_VIOLENT Protests
 ##############################################################################################################
 ##############################################################################################################
 
 
-data_peace = pd.read_csv("/Users/riccimason99/Downloads/Dissertation/US  Non-Violent Protests .csv")
-print(data_peace.tags.head(50))
-print(data_peace.tags.unique())
-data_peace.shape # 59564 observations
+data_peace = pd.read_csv("//Users/riccimason99/Downloads/Dissertation_2024/FULL  Non-Violent Protests .csv")
+#print(data_peace.tags.head(50))
+#print(data_peace.tags.unique())
+#data_peace.shape # 59564 observations
 
 
 # REMOVE VALUES OF SMALL PROTEST
 
-## This code removes a lot of values which the first number is below 200
+## This code removes a lot of values which the first number is below 100
 def check_number(s):
     # Ensure the input is a string
     if isinstance(s, str):
@@ -195,35 +199,45 @@ def check_number(s):
 # Apply the function to the 'tags' column and filter the DataFrame
 peace_ = data_peace[data_peace['tags'].apply(check_number)]
 # Show the filtered DataFrame
-peace_.shape #47021 observations # we lost a lot of observatoins
+#peace_.shape  # we lost a lot of observatoins
+#print(peace_.tags.unique())
 
-print(peace_.tags.unique())
-print(peace_.tags.iloc[200])
 
 # remove values in "values_to_remove"
 filtered_peace_ = peace_[~peace_['tags'].isin(values_to_remove)]
-filtered_peace_.shape
+#filtered_peace_.shape
    
 # remove useless columbs 
-filtered_peace_ = filtered_peace_.drop(['time_precision', 
+filtered_peace_ = filtered_peace_.drop(columns = ['time_precision', 
         'sub_event_type', 'event_type', 'actor1',  'inter1', 
         'actor2', 'timestamp', 'region', 'geo_precision',  'source_scale', 'iso', 
         'inter2', 'interaction', 'event_id_cnty', 'civilian_targeting',
         'admin3', 'country', 'disorder_type'], axis  = 1)
 
-print(filtered_peace_.tags.unique()[:50])
-
 
 # Convert 'tags' column to string type and then filter out rows
 filtered_peace_['tags'] = filtered_peace_['tags'].astype(str)
 filtered_peace_ = filtered_peace_[~filtered_peace_['tags'].str.contains('|'.join(words_to_drop))]
-filtered_peace_.shape
-# Now filtered_peace_ contains only rows where 'tags' column does not contain any word from words_to_drop
+filtered_peace_.reset_index(drop = True, inplace = True)
 
-print(filtered_peace_.tags.unique()[:50])
-1+1
-2+2
-print('poop')
+# Create a column with protest date in date time format 
+filtered_peace_["date_time"] = pd.to_datetime(filtered_peace_["event_date"], format = '%d %B %Y')
+
+
+# CREATE ANOTHER DATA FRAME OF ONLY ESSENTIAL COLUMNS
+
+# Remove non-essential columns
+peace_essential = filtered_peace_.drop(columns = ['year', 'assoc_actor_2', 'admin2', 
+                                           'latitude', 'longitude', 'source','fatalities'])
+
+# Create a column of dates string in the format that lesix nexis news takes,
+# make it easier to search articles 
+peace_essential['date_string'] = peace_essential['date_time'].dt.strftime('%d/%m/%Y')
+##
+
+
+
+
 
 
 
