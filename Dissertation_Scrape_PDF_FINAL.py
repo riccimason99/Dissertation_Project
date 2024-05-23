@@ -18,6 +18,7 @@ import pandas as pd
 ##############
 ###############################################################################
 
+# Function to scrape names of PDF files from the directory
 def get_pdf_files(directory):
     pdf_files = []
     for filename in os.listdir(directory):
@@ -25,18 +26,12 @@ def get_pdf_files(directory):
             pdf_files.append(filename)
     return pdf_files
 
-# Directory containing PDF files
-directory = "/Users/riccimason99/Downloads/Peafcul Articles"
-
-# Get the list of PDF files in the directory
-pdf_files = get_pdf_files(directory)
-
 # Print the list of PDF files
-print("PDF files in the directory:")
-for pdf_file in pdf_files:
-    print(pdf_file)
+#print("PDF files in the directory:")
+#for pdf_file in pdf_files:
+ #   print(pdf_file)
 
-
+# Create the function wich scrapes text from PDF 
 def extract_text_from_pdf(pdf_path):
     try:
         with open(pdf_path, "rb") as pdf_file:
@@ -49,9 +44,24 @@ def extract_text_from_pdf(pdf_path):
         print(f"Error: {e}")
         return None
 
+##########
+## SCRAPE PEACFUL PROTESTS
+##########
+directory = "/Users/riccimason99/Downloads/Dissertation_2024/Peafcul Articles"
+
+
+# Use the Previously Created Function to Get File Names
 
 # Get the list of PDF files in the directory
-pdf_files = [os.path.join(directory, file) for file in get_pdf_files(directory)]
+pdf_files = get_pdf_files(directory)
+# Print the list of PDF files
+#print("PDF files in the directory:")
+#for pdf_file in pdf_files:
+ #   print(pdf_file)
+
+
+# Get the list of PDF files for peacful protests
+pdf_files = [os.path.join(directory, file) for file in pdf_files]
 
 # Initialize lists to store file names and text
 pdf_names = []
@@ -69,46 +79,110 @@ for pdf_file in pdf_files:
     pdf_texts.append(pdf_text)
 
 # Create a DataFrame to store the data
-df = pd.DataFrame({'File Name': pdf_names, 'Text': pdf_texts})
+peace_text = pd.DataFrame({'File Name': pdf_names, 'Text': pdf_texts})
 
+
+    # YET TO BE COMPLETED, 
+# =============================================================================
+# ##
+# # Add the date of the protest wich the articles correspond as a column
+# ##
+# 
+# # initiate empty list
+date_plus_1 = []
+# loop through file name, which is the date of last article
+for i in peace_text["File Name"]:
+     date_plus_1.append(i[0:10])
+# make the list a column in the data frame
+peace_text['date_plus_1'] = date_plus_1
+# 
+peace_text['date_of_protest'] = pd.to_datetime(peace_text['date_plus_1'], format = '%d:%m:%Y')
+# print(peace_text['date_of_protest'])
+# 
+# # Add one day so the date is the date of the actual protest
+peace_text['date_of_protest'] = peace_text['date_plus_1'] + pd.Timedelta(days=1)
+# print(peace_text['date_of_protest'])
+peace_text = peace_text.drop(columns= ['date_plus_1'])
+
+
+##########
+## SCRAPE FROM VIOLENT PROTESTS
+##########
+
+directory_violent = '/Users/riccimason99/Downloads/Dissertation_2024/Violent Articles'
+
+# Use the Previously Created Function to Get File Names
+
+pdf_violent_files = get_pdf_files(directory_violent)
+# Print the list of PDF files
+#print("PDF files in the directory:")
+#for pdf_file in pdf_violent_files:
+ #   print(pdf_file)
+
+# Use the Previously Created Function to Get File Names
+pdf_violent_files = [os.path.join(directory_violent, file) for file in pdf_violent_files]
+
+# Initialize lists to store file names and text
+pdf_names = []
+pdf_texts = []
+
+# Iterate over each PDF file, extract text, and accumulate it along with the file name
+for pdf_file in pdf_violent_files:
+    # Extract text from the PDF
+    pdf_text = extract_text_from_pdf(pdf_file)
+    
+    # Append the file name to the list
+    pdf_names.append(os.path.basename(pdf_file))
+    
+    # Append the extracted text to the list
+    pdf_texts.append(pdf_text)
+
+# Create a DataFrame to store the data
+vil_text = pd.DataFrame({'File Name': pdf_names, 'Text': pdf_texts})
+
+##
+# Add the date of the protest wich the articles correspond as a column
+##
+
+# initiate empty list
+date_plus_1 = []
+# loop through file name, which is the date of last article
+for i in vil_text["File Name"]:
+    date_plus_1.append(i[0:10])
+# make the list a column in the data frame
+vil_text['date_plus_1'] = date_plus_1
+
+print(date_plus_1)
+
+vil_text['date_of_protest'] = pd.to_datetime(vil_text['date_plus_1'], format = '%d:%m:%Y')
+#print(vil_text['date_of_protest'])
+
+# Add one day so the date is the date of the actual protest
+vil_text['date_of_protest'] = vil_text['date_of_protest'] + pd.Timedelta(days=1)
+#print(vil_text['date_of_protest'])
+vil_text.columns
 
 
 ###############################################################################
 #####################
 ###############
-###### Match articles to protest in ACLED
+###### Match articles to protest in ACLED and Merge Data
 ##############
 #####################
 ###############################################################################
 
+# MERGE VIOLENT PROTESTS W TEXT
 
-
-# Create New Column for the date of the last article plus 1 day
-
-# initiate empty list
-date_plus_1 = []
-# loop through file name, which is the date of last article
-for i in df["File Name"]:
-    date_plus_1.append(i[0:10])
-# make the list a column in the data frame
-df['date_plus_1'] = date_plus_1
-
-#make new string into date time
-df['date_of_protest'] = pd.to_datetime(df['date_plus_1'], format = '%d:%m:%Y')
-print(df['date_of_protest'])
-
-# Add one day so the date is the date of the actual protest
-df['date_of_protest'] = df['date_of_protest'] + pd.Timedelta(days=1)
-print(df['date_of_protest'])
-    
-#create a date time column for "peace" data frame
-peace["date_time"] = pd.to_datetime(peace.event_date, format = '%d %B %Y')
-
-
-peace_new = df.merge(peace, left_on = 'date_of_protest', right_on = 
+# Merge the ACLED data with the scraped text based on dates, if there are no protest 
+# for a the date of a given group of text it will appear NA
+merged_violent = vil_text.merge(violent_essential, left_on = 'date_of_protest', right_on = 
                         'date_time', how = 'left')
+# remove un necessary columns
+merged_violent = merged_violent.drop(columns= ['File Name', "date_plus_1", "date_time"])
 
-peace.tags.tail()
+
+# MERGE PEACFUL PROTESTS W TEXT
+
 
 
 
