@@ -23,7 +23,7 @@ from collections import Counter
 
 
 # Load Data
-all_text = pd.read_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame.csv')
+all_text = pd.read_csv('[...]all_text_data_frame.csv')
 
 
 ###############################################################
