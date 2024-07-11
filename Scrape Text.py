@@ -50,7 +50,7 @@ def extract_text_from_pdf(pdf_path):
 ##############
 ###############################################################################
 
-directory = "/Users/riccimason99/Downloads/Dissertation_2024/Peafcul Articles"
+directory = "[...]"
 
 
 # Use the Previously Created Function to Get File Names
@@ -83,7 +83,6 @@ for pdf_file in pdf_files:
 
 # Create a DataFrame to store the data
 peace_text = pd.DataFrame({'File Name': pdf_names, 'Text': pdf_texts})
-
 
 
 
@@ -188,29 +187,7 @@ all_text = pd.concat([peace_text, vil_text])
 print(all_text[all_text['File Name'].duplicated()])
 
 # Save as CSV
-all_text.to_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame.csv',index = False)
-
-
-
-
-
-
-
-
-###################################
-###################################
-###############
-#   MERGE ACLED DATA WITH ACTUAL PROTEST 
-###############
-###################################
-###################################
-
-# Merge the ACLED data with the scraped text based on dates, if there are no protest 
-# for a the date of a given group of text it will appear NA
-#merged_peace = df.merge(peace_essential, left_on = 'date_of_protest', right_on = 
-#                       'date_time', how = 'left')
-# remove un necessary columns
-#merger_peace = merged_peace.drop(columns= ['File Name', "date_plus_1", "date_time"])
+all_text.to_csv('[...]all_text_data_frame.csv',index = False)
 
 
 
