@@ -116,8 +116,8 @@ def extract_number(text):
 
 
 # Load and look at data
-violent_2017 = pd.read_csv("/Users/riccimason99/Downloads/Dissertation_2024/FULL Violent Protests.csv")
-#violent_2017 = pd.read_csv("//Users/riccimason99/Downloads/Dissertation_2024/Violent Articles/ACLED_TEST.csv")
+violent_2017 = pd.read_csv("[...].csv")
+#violent_2017 = pd.read_csv("[...].csv")
 
 
 # REMOVE VALUES OF SMALL PROTEST
@@ -174,7 +174,7 @@ violent_essential['date_string'] = violent_essential['date_time'].dt.strftime('%
 ##############################################################################################################
 
 
-data_peace = pd.read_csv("//Users/riccimason99/Downloads/Dissertation_2024/FULL  Non-Violent Protests .csv")
+data_peace = pd.read_csv("[...].csv")
 #print(data_peace.tags.head(50))
 #print(data_peace.tags.unique())
 #data_peace.shape # 59564 observations
@@ -199,7 +199,7 @@ def check_number(s):
 # Apply the function to the 'tags' column and filter the DataFrame
 peace_ = data_peace[data_peace['tags'].apply(check_number)]
 # Show the filtered DataFrame
-#peace_.shape  # we lost a lot of observatoins
+#peace_.shape  # we lost a lot of observations
 #print(peace_.tags.unique())
 
 
@@ -207,7 +207,7 @@ peace_ = data_peace[data_peace['tags'].apply(check_number)]
 filtered_peace_ = peace_[~peace_['tags'].isin(values_to_remove)]
 #filtered_peace_.shape
    
-# remove useless columbs 
+# remove useless columns 
 filtered_peace_ = filtered_peace_.drop(columns = ['time_precision', 
         'sub_event_type', 'event_type', 'actor1',  'inter1', 
         'actor2', 'timestamp', 'region', 'geo_precision',  'source_scale', 'iso', 
