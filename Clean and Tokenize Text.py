@@ -20,10 +20,11 @@ import datefinder
 import re
 from nltk.corpus import stopwords
 from collections import Counter
+import string
 
 
 # Load Data
-all_text = pd.read_csv('[...]all_text_data_frame.csv')
+all_text = pd.read_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame.csv')
 
 
 ###############################################################
@@ -71,10 +72,6 @@ def remove_dates_and_unwanted_patterns(text):
 
 # Apply the function to the DataFrame
 all_text['clean_text'] = all_text['Text'].apply(remove_dates_and_unwanted_patterns)
-
-
-
-
 
 
 
@@ -165,33 +162,35 @@ nltk.download('punkt')
 nltk.download('stopwords')
 stopwords_list = set(stopwords.words('english'))
 
+
+
+# more symbols to delte 
+delte =["'s", "''", '--', '“', '”', 'said', "n't", '``','//']
+
+
 # Create Function to Tokenize Text IGNORING stop words
 def tokenize_text(text):
     tokens = []
     for sent in nltk.sent_tokenize(text):
         for word in nltk.word_tokenize(sent):
-            if word in stopwords_list: # ignores any stop wordss
+            if word in stopwords_list or word in string.punctuation or word in delte: # ignores any stop wordss
+                continue
+            if len(word) < 2:
                 continue
             else: 
                 tokens.append(word)          
     return(tokens)
 
 
-all_text.tokens = all_text.clean_text.apply(tokenize_text)
-
-print(all_text.tokens[11])
-print(all_text.clean_text[11])
-print(stopwords_list)
 
 
-
-
+all_text["tokens"] = all_text.clean_text.apply(tokenize_text)
 
 
 
 ######## NEED TO REMOVE MORE USELESS WORDS!!!
 # Tokenize the text at index 11
-tokens = tokenize_text(all_text['clean_text'][3])
+tokens = tokenize_text(all_text['clean_text'][20])
 
 # Count the occurrences of each token
 token_counts = Counter(tokens)
@@ -201,5 +200,11 @@ print("Most common tokens:")
 print(token_counts.most_common())
 
 
+# Drop useless columns and text that can not be made available for copyright issues
+# while leaving tokenized text 
+all_text = all_text.drop(['File Name', 'Text', 'clean_text'], axis =1)
+#all_text.columns
 
+# Save data frame 
+all_text.to_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame_clean.csv',index = False)
 
