@@ -16,6 +16,8 @@ import gensim
 from gensim.models import Doc2Vec
 from gensim.models.doc2vec import TaggedDocument
 import re
+import gensim.models as g
+
 
 import multiprocessing
 from sklearn.preprocessing import StandardScaler
@@ -83,7 +85,7 @@ train_tagged = df.apply(
 cores = multiprocessing.cpu_count()
 
 # Create model specifics
-model_dbow = Doc2Vec(dm=0, vector_size=300, negative=5, hs=0, min_count=5, sample = 0, workers=cores)
+model_dbow = Doc2Vec(dm=0, vector_size=300, negative=0, hs=0, min_count=5, sample = 0, workers=cores)
 # Build vocabulary 
 model_dbow.build_vocab([x for x in tqdm(train_tagged.values)])
 
@@ -93,13 +95,11 @@ for epoch in range(30):
     model_dbow.alpha -= 0.002
     model_dbow.min_alpha = model_dbow.alpha
 
-# Create word embedding which will be used for the classifier 
+# Function creates word embedding which will be used for the classifier 
 def vec_for_learning(model, tagged_docs):
     sents = tagged_docs.values
     targets, regressors = zip(*[(doc.tags[0], model.infer_vector(doc.words, epochs=20)) for doc in sents])
     return targets, regressors
-
-
 
 
 ############
@@ -108,15 +108,19 @@ def vec_for_learning(model, tagged_docs):
 ########################
 ############
 
+# Set the random seed for reproducibility
+np.random.seed(24)
+
 # Set classifier
 clf = SVC()
 # clf = RandomForestClassifier()
 
-# Set input and respnse variables
+# Set input and respnse variables, with "home made" model
 y, X = vec_for_learning(model_dbow, train_tagged)
 
+
 # Use cross validation 
-kfold = KFold(n_splits = 5, shuffle = True)
+kfold = KFold(n_splits = 3, shuffle = True)
 
 scores = cross_val_score(clf, X, y, cv = kfold, scoring = 'accuracy')
 
@@ -181,15 +185,15 @@ for v in X_train_vect:
     if v.size:
         X_train_vect_avg.append(v.mean(axis=0))
     else:
-        X_train_vect_avg.append(np.zeros(100, dtype=float))
+        X_train_vect_avg.append(np.zeros(300, dtype=float))
         
-
+# do the same for x test
 X_test_vect_avg = []
 for v in X_test_vect:
     if v.size:
         X_test_vect_avg.append(v.mean(axis=0))
     else:
-        X_test_vect_avg.append(np.zeros(100, dtype=float))
+        X_test_vect_avg.append(np.zeros(300, dtype=float))
 
 
 # Are our sentence vector lengths consistent?
