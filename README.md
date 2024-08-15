@@ -47,4 +47,8 @@ This is the data frame used for most of the code files in the project.
 
 - "neg","compounds", "pos", "neu" are sentiment scores
 
-- "untokenized" are all tokens together as one string 
+- "untokenized" are all tokens together as one string
+
+  ## Supplementary Files
+
+  Contains code used to scrape text from pdf into a pandas dataframe and code used to filter out ACLED protest based on protest size.
