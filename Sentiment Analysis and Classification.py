@@ -96,35 +96,8 @@ all_text = all_text.sort_values('neg')
 #all_text.to_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame_clean.csv', index=False)
 
 
-# THIS PLOT DOESNT MAKE ANY SENSE, IT IS PLOTTING THE SAME THING TWICE
-# Create the plot
-jitter = 0.04  # Adjust the jitter amount as needed
-all_text['pred_prob_jittered'] = all_text['pred_prob'] + np.random.normal(0, jitter, all_text['pred_prob'].shape)
-
-plt.figure(figsize=(10, 6))
-sns.scatterplot(x='neg', y='pred_prob_jittered', data=all_text, label='Actual', color='blue', alpha=0.5)
-sns.lineplot(x='neg', y='pred_prob', data=all_text, label='Predicted Probability', color='red')
-
-plt.xlabel('Negative Sentiment Score')
-plt.ylabel('Probability of Non-Peaceful Protest')
-plt.title('Logistic Regression: Predicted Probability vs. Negative Sentiment Score')
-plt.legend()
-plt.show()
-
-
-# There is a statisticallly significant relationship between 
+# There is a relationship between 
 # negative sentiment score and likleyhood of non-peacful in protest.
-
-# Convert to odds ratio
-logit = 3.6508
-odds_ratio = math.exp(3.6508)  ## Convert to odds ratio 0.3750109700398499
-# Get percent probabitliy 
-(odds_ratio-1)*100
-# So a one unit increase in neg score(neg score is from 0-1) is associate with 
-#   an estimated 
-
-
-all_text.date_of_protest.max()
 
 
 ############
@@ -137,15 +110,15 @@ X = all_text[['compounds', 'neg', 'pos', 'neu']]
 y = all_text['binary']
 X_train,X_test, y_train, y_test = train_test_split(X, y, test_size = .2)
 
-#clf = LogisticRegression()                 #73% Accuracy
-#clf = LinearDiscriminantAnalysis()         #78% Accuracy
-#clf = KNeighborsClassifier(n_neighbors=3) #84% Accuracy
-#clf = SVC(kernel='rbf')                  #73% Accuracy
-clf = GaussianNB()                       #86% Accuracy
+#clf = LogisticRegression()                 
+#clf = LinearDiscriminantAnalysis()         
+#clf = KNeighborsClassifier(n_neighbors=3) 
+#clf = SVC(kernel='rbf')                  
+clf = GaussianNB()                       
 
 
 # Use cross validation to select model and parameters  
-kfold = KFold(n_splits = 5, shuffle = True, random_state = 420)
+kfold = KFold(n_splits = 5, shuffle = True)
 scores = cross_val_score(clf, X_train, y_train, cv = kfold, scoring = 'accuracy')
 print(f'Cross-validated Accuracy: {scores.mean():.2f} (+/- {scores.std():.2f})')
 
