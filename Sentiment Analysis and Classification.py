@@ -30,7 +30,7 @@ import seaborn as sns
 
 
 # Import data
-all_text = pd.read_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame_clean.csv')
+all_text = pd.read_csv('the data.csv')
 
 ############
 ########################
@@ -90,11 +90,6 @@ all_text['pred_prob'] = results.predict(all_text[['const','neg']])
 
 # sort by X variable 
 all_text = all_text.sort_values('neg')
-
-
-# save data frame 
-#all_text.to_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame_clean.csv', index=False)
-
 
 # There is a relationship between 
 # negative sentiment score and likleyhood of non-peacful in protest.
