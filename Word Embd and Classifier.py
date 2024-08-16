@@ -40,7 +40,7 @@ from sklearn.metrics import f1_score
 ############
 
 # Import Data
-df = pd.read_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame_clean.csv')
+df = pd.read_csv([...]all_text_data_frame_clean.csv')
 df = df[['clean_text','binary']]
 
 # Split words by space
