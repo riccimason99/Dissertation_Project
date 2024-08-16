@@ -24,7 +24,7 @@ import string
 
 
 # Load Data
-all_text = pd.read_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame.csv')
+all_text = pd.read_csv('[...]all_text_data_frame.csv')
 
 
 ###############################################################
@@ -181,30 +181,15 @@ def tokenize_text(text):
                 tokens.append(word)          
     return(tokens)
 
-
-
-
+# Apply Function
 all_text["tokens"] = all_text.clean_text.apply(tokenize_text)
-
-
-
-######## NEED TO REMOVE MORE USELESS WORDS!!!
-# Tokenize the text at index 11
-tokens = tokenize_text(all_text['clean_text'][20])
-
-# Count the occurrences of each token
-token_counts = Counter(tokens)
-
-# Print the most common tokens
-print("Most common tokens:")
-print(token_counts.most_common())
 
 
 # Drop useless columns and text that can not be made available for copyright issues
 # while leaving tokenized text 
 all_text = all_text.drop(['File Name', 'Text', 'clean_text'], axis =1)
-#all_text.columns
+
 
 # Save data frame 
-all_text.to_csv('/Users/riccimason99/Downloads/Dissertation_2024/all_text_data_frame_clean.csv',index = False)
+all_text.to_csv('...',index = False)
 
