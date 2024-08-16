@@ -211,9 +211,6 @@ rf_model = rf.fit(X_train_vect_avg, y_train.values.ravel())
 scores = cross_val_score(rf_model, X_train_vect_avg, y_train, cv = kfold, scoring = 'f1')
 print(f'Cross-validated Accuracy: {scores.mean():.2f} (+/- {scores.std():.2f})')
 
-# Cross Validation score was .5 despite multiple efforts made to 
-#   adjust the classifier and hyper parameters, I will not continue to observe 
-#   test set.
 
 
 
