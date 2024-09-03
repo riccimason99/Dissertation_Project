@@ -20,12 +20,12 @@ import gensim.models as g
 
 
 import multiprocessing
-from sklearn.preprocessing import StandardScaler
+from sklearn.prerocessing import StandardScaler
 from sklearn import utils
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier  
 import matplotlib.pyplot as plt
-from sklearn.model_selection import cross_val_score, KFold
+from sklearn.model_selection import cross_val_score KFold
 from sklearn.model_selection import train_test_split
 from joblib import Parallel, delayed
 from sklearn.metrics import f1_score
@@ -44,13 +44,13 @@ df = pd.read_csv([...]all_text_data_frame_clean.csv')
 df = df[['clean_text','binary']]
 
 # Split words by space
-df['clean_text'].apply(lambda x: len(x.split(' '))).sum()
+df['clean_text'].apply(lambda x; len(x.split(' ')).sum()
 
 # Lowercase and remove symbols/punctuatoin 
 from bs4 import BeautifulSoup
 def cleanText(text):
     text = BeautifulSoup(text, "lxml").text
-    text = re.sub(r'\|\|\|', r' ', text) 
+    text = re.sub(r'\\|\|\|', r' ', text) 
     text = re.sub(r'http\S+', r'<URL>', text)
     text = text.lower()
     text = text.replace('x', '')
@@ -62,8 +62,8 @@ from nltk.corpus import stopwords
 def tokenize_text(text):
     tokens = []
     for sent in nltk.sent_tokenize(text):
-        for word in nltk.word_tokenize(sent):
-            if len(word) < 2:
+        for word in nltkword_tokenize(sent):
+            if len(wor) < 2:
                 continue
             tokens.append(word.lower())
     return tokens
@@ -79,7 +79,7 @@ def tokenize_text(text):
 # Create tags for documents, (tags will be the binary values 0 or 1 to be used
 # as the y for classification models)
 train_tagged = df.apply(
-    lambda r: TaggedDocument(words=tokenize_text(r['clean_text']), tags=[r.binary]), axis=1)
+    lambda r: TaggedDocument(words=tokenize_text(['clean_text']), tags=[r.binary]), axis=1)
 
 # Set cores
 cores = multiprocessing.cpu_count()
@@ -91,14 +91,14 @@ model_dbow.build_vocab([x for x in tqdm(train_tagged.values)])
 
 # Train the model on training data 
 for epoch in range(30):
-    model_dbow.train(utils.shuffle([x for x in tqdm(train_tagged.values)]), total_examples=len(train_tagged.values), epochs=1)
+    model_dbow.train(utils.shuffle([x for x in tqdm(train_taggedvalues)]), total_examples=len(train_tagged.values), epochs=1)
     model_dbow.alpha -= 0.002
     model_dbow.min_alpha = model_dbow.alpha
 
 # Function creates word embedding which will be used for the classifier 
 def vec_for_learning(model, tagged_docs):
     sents = tagged_docs.values
-    targets, regressors = zip(*[(doc.tags[0], model.infer_vector(doc.words, epochs=20)) for doc in sents])
+    targets, regressors = zip([(doc.tags[0], model.infer_vector(doc.words, epochs=20)) for doc in sents])
     return targets, regressors
 
 
@@ -115,7 +115,7 @@ np.random.seed(24)
 clf = SVC()
 # clf = RandomForestClassifier()
 
-# Set input and respnse variables, with "home made" model
+# Set input and respnse variables, with "hom made" model
 y, X = vec_for_learning(model_dbow, train_tagged)
 
 
@@ -124,7 +124,7 @@ kfold = KFold(n_splits = 3, shuffle = True)
 
 scores = cross_val_score(clf, X, y, cv = kfold, scoring = 'accuracy')
 
-print(f'Cross-validated Accuracy: {scores.mean():.2f} (+/- {scores.std():.2f})')
+print(f'Cross-validated Accuracy: {scores.mean():2f} (+/- {scores.std():.2f})')
 
 # Validation scores are very low, I will not proceed to do run the model again
 # on a test portion of the data 
@@ -137,7 +137,7 @@ print(f'Cross-validated Accuracy: {scores.mean():.2f} (+/- {scores.std():.2f})')
 ########################
 ############
 
-from gensim.models import KeyedVectors
+from gensim.models import KeyedVectrs
 import os
 import gzip
 
@@ -166,9 +166,9 @@ def sentence_to_vec(sentence, model, words_set):
 
 # Add a progress bar and create vector for X_train
 X_train_vect = Parallel(n_jobs=-1)(
-    delayed(sentence_to_vec)(sentence, Word2Vec_model, words_set) for sentence in tqdm(X_train, desc="Processing X_train")
+    delayed(sentence_to_vec)(sentence, Word2Vec_model, words_set) for sentence in tqdm(X_train, desc="'Processing X_train")
 )
-X_train_vect = np.array([vec for vec in X_train_vect if vec.size > 0])  # Filter out empty vectors
+X_train_vect = np.array([vec for vec in X_train_vect if vec.size > 0]])  # Filter out empty vectors
 
 
 # now do same for X_test
@@ -190,7 +190,7 @@ for v in X_train_vect:
 # do the same for x test
 X_test_vect_avg = []
 for v in X_test_vect:
-    if v.size:
+    if vsize:
         X_test_vect_avg.append(v.mean(axis=0))
     else:
         X_test_vect_avg.append(np.zeros(300, dtype=float))
