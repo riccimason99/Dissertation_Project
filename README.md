@@ -12,7 +12,7 @@ Mason Ricci  [@riccimason99](https://github.com/riccimason99)
 
 ## Code
 
-All code in this repository was run using Python 3.11.4 on August 15th 2025
+All code in this repository was run using Python 3.11.4 on August 15th 2024
 
 
 #### Sentiment Analysis and Classification.py
