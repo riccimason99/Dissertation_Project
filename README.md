@@ -28,7 +28,7 @@ Transforms tokenised articles into weighted word embeddings and document embeddi
 This code is included to display text pre-processing and tokenisation steps; however, you will not be able to run this code as the original articles have not been included in the repository.
 
 #### Dissertation_Final.docx
-Please refer to the complete article for more detailed information regarding decisions made in the coding process.
+Completed paper containg detailed information regarding decisions made in the coding process.
 ## Data
 
 
