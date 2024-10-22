@@ -38,7 +38,7 @@ Information Reguarding Protest Time Location and if it was Peacful or not is der
 #### Text
 All text was scraped from the LexisNexis News and Business [website](https://www.lexisnexis.com/en-us/products/digital-library.page?srsltid=AfmBOopIkv8qttxk9SS5XoLUhA7U6EkJwk0DBH66-Yy3DUmfMGW4XME5). Relevant articles were identified by keyword search and a date window extending four days before the protest occurred. Due to copyright issues, I was unable to make the full articles available. However, cleaned and tokenized versions of the articles are available in the CSV file named Project_DF.csv.
 
-#### Project_DF.csv
+#### Data_Frame.csv
 This is the data frame used for most of the code files in the project. 
 
 - "Binary" tells if the protest was peaceful or not. 0 for peaceful, 1 for non-peaceful. ]
