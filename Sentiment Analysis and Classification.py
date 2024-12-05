@@ -45,7 +45,7 @@ all_text['untokenized'] = all_text['tokens'].apply(lambda tokens: ''.join(tokens
 # Set sentminet analizer 
 analyzer = SentimentIntensityAnalyzer()
 
-# get scores for each piece of text and append to list 
+## get scores for each piece of text and append to list
 compounds = []
 neg = []
 pos = []
