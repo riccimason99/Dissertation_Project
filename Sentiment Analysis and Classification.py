@@ -32,11 +32,11 @@ import seaborn as sns
 # Import data
 all_text = pd.read_csv('...')
 
-############
+##############
 ########################
 # Sentiment Analysis  
 ########################
-############
+##############
 
 # first untokenize text so it can be used easily for sentiment analysis
 all_text['untokenized'] = all_text['tokens'].apply(lambda tokens: ''.join(tokens).replace("', '", ' ').replace("['", '').replace("']", ''))
@@ -45,7 +45,7 @@ all_text['untokenized'] = all_text['tokens'].apply(lambda tokens: ''.join(tokens
 # Set sentminet analizer 
 analyzer = SentimentIntensityAnalyzer()
 
-# get scores for each piece of text and append to list 
+## get scores for each piece of text and append to list
 compounds = []
 neg = []
 pos = []
